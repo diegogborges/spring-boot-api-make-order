@@ -16,7 +16,9 @@ import java.io.Serializable;
 @Table(name="product")
 public class Product implements Serializable {
 
-    @Id
+	private static final long serialVersionUID = -7853343810134512970L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="idProduct")
     private Long idProduct;
@@ -75,6 +77,14 @@ public class Product implements Serializable {
 
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    public ProductType getProductType() {
+        return productType;
+    }
+
+    public void setProductType(ProductType productType) {
+        this.productType = productType;
     }
 
     @Override

@@ -12,7 +12,9 @@ import java.io.Serializable;
 @Table(name="client")
 public class Client implements Serializable {
 
-    @Id
+	private static final long serialVersionUID = 7768800425127272924L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="idclient")
     private Long idClient;
@@ -23,16 +25,17 @@ public class Client implements Serializable {
     @Column(name="email")
     private String email;
 
-    @Column(name="senha")
-    private String senha;
+    @Column(name="password")
+    private String password;
 
     public Client() {
     }
 
-    public Client(String name, String email, String senha) {
+    public Client(Long idClient, String name, String email, String password) {
+        this.idClient = idClient;
         this.name = name;
         this.email = email;
-        this.senha = senha;
+        this.password = password;
     }
 
     public Long getIdClient() {
@@ -59,12 +62,12 @@ public class Client implements Serializable {
         this.email = email;
     }
 
-    public String getSenha() {
-        return senha;
+    public String getPassword() {
+        return password;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
@@ -73,7 +76,7 @@ public class Client implements Serializable {
                 "idClient=" + idClient +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", senha='" + senha + '\'' +
+                ", password='" + password + '\'' +
                 '}';
     }
 }

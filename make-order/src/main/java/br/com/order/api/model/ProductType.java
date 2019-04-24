@@ -12,7 +12,9 @@ import java.io.Serializable;
 @Table(name="product_type")
 public class ProductType implements Serializable {
 
-    @Id
+	private static final long serialVersionUID = -1350257758904148625L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="idProductType")
     private Long idProductType;

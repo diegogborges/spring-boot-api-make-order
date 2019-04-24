@@ -1,61 +1,61 @@
 package br.com.order.api.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import java.io.Serializable;
-import java.util.Date;
+import java.util.*;
 
 @Entity
 @Table(name="demand")
 public class Demand implements Serializable {
 
-    @Id
+	private static final long serialVersionUID = -5217722155551245904L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="iddemand")
     private Long idDemand;
 
-    @Column(name="quantity")
-    private int quantity;
-
+    @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name="date_demand")
     private Date dateDemand;
 
+    @Column(name="status")
+    private String status;
+
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "client_idclient", nullable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    @JsonIgnore
     private Client client;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "product_idproduct", nullable = false)
-    @OnDelete(action = OnDeleteAction.NO_ACTION)
-    @JsonIgnore
-    private Product product;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "pk.demand")
+    @Valid
+    private List<DemandProduct> demandProducts = new ArrayList<>();
 
-    public Demand(int quantity, Date dateDemand, Client client, Product product) {
-        this.quantity = quantity;
-        this.dateDemand = dateDemand;
-        this.client = client;
-        this.product = product;
+    @Transient
+    public Double getTotalOrderPrice() {
+        double sum = 0D;
+        List<DemandProduct> demandProducts = getDemandProducts();
+        for (DemandProduct dp : demandProducts) {
+            sum += dp.getTotalPrice();
+        }
+        return sum;
     }
-
+ 
+    @Transient
+    public int getNumberOfProducts() {
+        return this.demandProducts.size();
+    }
+    
     public Long getIdDemand() {
         return idDemand;
     }
 
     public void setIdDemand(Long idDemand) {
         this.idDemand = idDemand;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
     public Date getDateDemand() {
@@ -74,22 +74,32 @@ public class Demand implements Serializable {
         this.client = client;
     }
 
-    public Product getProduct() {
-        return product;
+    public String getStatus() {
+        return status;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<DemandProduct> getDemandProducts() {
+		return demandProducts;
+	}
+
+	public void setDemandProducts(List<DemandProduct> demandProducts) {
+		this.demandProducts = demandProducts;
+	}
+
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Demand demand = (Demand) o;
+        return Objects.equals(idDemand, demand.idDemand);
     }
 
     @Override
-    public String toString() {
-        return "Demand{" +
-                "idDemand=" + idDemand +
-                ", quantity=" + quantity +
-                ", dateDemand=" + dateDemand +
-                ", client=" + client +
-                ", product=" + product +
-                '}';
+    public int hashCode() {
+        return Objects.hash(idDemand);
     }
 }
